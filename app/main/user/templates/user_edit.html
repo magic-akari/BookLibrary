@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block mycontent %}
+    <div class="jumbotron">
+        <div class="row">
+            {% if user.avatar_url() %}
+                <div class="col-md-4 clearfix">
+                    <div class="media-object avatar avatar-large"
+                         style="background-image: url({{ user.avatar_url() }})"></div>
+                </div>
+            {% endif %}
+            <div class="col-md-8">
+                <h1 class="page-header">{{ user.name }}
+                    <br>
+                    <small>{{ user.email }}</small>
+                </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="well well-lg">
+                <h3>{{ title }}</h3>
+                {{ wtf.quick_form(form,button_map={'submit':'success'}) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{%- block scripts -%}
+    {{ super() }}
+    {#    {{ pagedown.include_pagedown() }}#}
+    <script src="{{ url_for('static',filename='js/Markdown.Converter.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/Markdown.Sanitizer.min.js') }}"></script>
+{%- endblock -%}

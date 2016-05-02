@@ -1,0 +1,111 @@
+{%- extends "bootstrap/base.html" -%}
+{%- from 'bootstrap/utils.html' import flashed_messages,icon -%}
+{%- block metas -%}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+{%- endblock metas -%}
+{%- block title -%}
+    {%- if title -%}
+        {{ title }} - Book Library
+    {%- else -%}
+        Book Library
+    {%- endif -%}
+{%- endblock -%}
+{%- block styles -%}
+    {#    {{ super() }}#}
+    <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='css/bootstrap-theme.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='css/main.css') }}" rel="stylesheet">
+{%- endblock -%}
+{%- block body_attribs %} class="Site"{%- endblock -%}
+{%- block navbar -%}
+    <nav class="navbar  navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">Book Library</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li {%- if request.path == url_for('book.index') %} class="active"{%- endif -%} ><a
+                            href="{{ url_for('book.index') }}">书籍清单</a></li>
+                    {%- if current_user.is_authenticated -%}
+                        <li {%- if request.path == url_for('book.tags') %} class="active"{%- endif -%} ><a
+                                href="{{ url_for('book.tags') }}">标签</a></li>
+                        {%- if current_user.can(Permission.ADD_BOOK) -%}
+                            <li {%- if request.path == url_for('book.add') %} class="active"{%- endif -%} ><a
+                                    href="{{ url_for('book.add') }}">添加新书</a></li>
+                        {%- endif -%}
+                        <li {%- if request.path == url_for('user.index') %} class="active"{%- endif -%} ><a
+                                href="{{ url_for('user.index') }}">已注册用户</a></li>
+                        <li {%- if request.path == url_for('log.index') %} class="active"{%- endif -%} ><a
+                                href="{{ url_for('log.index') }}">借阅信息</a></li>
+                    {%- endif -%}
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {%- if current_user.is_authenticated -%}
+                        <li {% if request.path == url_for('user.detail',user_id=current_user.id) -%}
+                            class="active"{%- endif -%} >
+                            <a href="{{ url_for('user.detail',user_id=current_user.id) }}">{{ current_user.name }}</a>
+                        </li>
+                        <li><a href="{{ url_for('auth.logout') }}">登出</a></li>
+                    {%- else -%}
+                        <li><a href="{{ url_for('auth.login') }}">登入</a></li>
+                    {%- endif -%}
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+{%- endblock -%}
+
+{%- block content -%}
+    <main class="container-fluid Site-content">
+        {%- with icon_transform={
+    'success':icon('ok'),
+    'danger':icon('ban-circle'),
+    'info': icon('info-sign'),
+    'warning': icon('alert')} -%}
+            {%- set messages=get_flashed_messages(with_categories=True) -%}
+            {%- if messages -%}
+                {%- for cat, msg in messages -%}
+                    <div class="alert alert-{{ cat }} alert-dismissible animated bounceIn delay-{{ loop.index0 }}"
+                         role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        {{ icon_transform.get(cat) ~' '~ msg }}
+                    </div>
+                {%- endfor -%}
+            {%- endif -%}
+        {%- endwith -%}
+        {%- block mycontent -%}{%- endblock -%}
+    </main>
+
+    <footer class="panel panel-inverse">
+        <div id="site-footer-content">
+            <div><a href="https://github.com/hufan-akari" target="_blank"><span
+                    class="icon icon--github"><svg
+                    viewBox="0 0 16 16">
+                <path fill="#828282"
+                      d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"></path>
+            </svg></span><span class="username">hufan-akari</span></a></div>
+
+            <span class="line-wrap">Created lovely by <a href="https://hufan-akari.github.io">胡凡</a>.</span>
+            <span class="line-wrap">Source code released under the <a
+                    href="https://github.com/hufan-Akari/hufan.BookLibrary/blob/master/LICENSE">MIT</a> license.</span>
+        </div>
+    </footer>
+{%- endblock -%}
+
+{%- block scripts -%}
+    <script src="{{ url_for('static',filename='js/jquery-2.2.3.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
+{%- endblock scripts -%}
+

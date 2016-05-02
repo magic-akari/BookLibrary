@@ -1,0 +1,294 @@
+{%- extends "base.html" -%}
+{%- from "bootstrap/pagination.html" import render_pagination -%}
+{%- import "bootstrap/wtf.html" as wtf -%}
+{%- block mycontent -%}
+    <div class="well well-lg">
+
+        <h1 class="page-header animated fadeInLeft">{{ book.title }}
+            <br>
+            {%- if book.subtitle -%}
+                <small>{{ book.subtitle }}</small>
+            {%- endif -%}
+        </h1>
+        <div class="primary-info">
+            {%- if book.image -%}
+                <img class="img-responsive" src="{{ book.image }}" alt="{{ book.title~' 封面' }}">
+            {%- endif -%}
+            <ul class="list-group">
+                <li class="list-group-item">ISBN: {{ book.isbn }}</li>
+                {%- if book.origin_title -%}
+                    <li class="list-group-item">原作名: {{ book.origin_title }}</li>
+                {%- endif -%}
+                {%- if book.author -%}
+                    <li class="list-group-item">作者: {{ book.author }}</li>
+                {%- endif -%}
+                {%- if book.translator -%}
+                    <li class="list-group-item">译者: {{ book.translator }}</li>
+                {%- endif -%}
+                {%- if book.publisher -%}
+                    <li class="list-group-item">出版社: {{ book.publisher }}</li>
+                {%- endif -%}
+                {%- if book.pubdate -%}
+                    <li class="list-group-item">出版日期: {{ book.pubdate }}</li>
+                {%- endif -%}
+                {%- if book.tags.count() -%}
+                    <li class="list-group-item">标签:
+                        {% for tag in book.tags %}
+                            <a class="tag line-wrap" href="{{ url_for('.tags',search=tag.name) }}">{{ tag.name }} <span
+                                    class="badge">{{ tag.books.count() }}</span></a>
+                        {% endfor %}
+                    </li>
+                {%- endif -%}
+                {%- if book.pages -%}
+                    <li class="list-group-item">页数: {{ book.pages }}</li>
+                {%- endif -%}
+                {%- if book.price -%}
+                    <li class="list-group-item">定价: {{ book.price }}</li>
+                {%- endif -%}
+                {%- if book.binding -%}
+                    <li class="list-group-item">装帧: {{ book.binding }}</li>
+                {%- endif -%}
+                <li class="list-group-item">馆藏 / 可借: {{ book.numbers }} / {{ book.can_borrow_number() }}</li>
+            </ul>
+        </div>
+        <br>
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#summary"
+                           aria-expanded="true" aria-controls="collapseOne">
+                            内容简介
+                        </a>
+                    </h4>
+                </div>
+                <div id="summary" class="panel-collapse collapse in" role="tabpanel"
+                     aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        {%- if book.summary_html -%}
+                            {{ book.summary_html|safe }}
+                        {%- else -%}
+                            {{ book.summary }}
+                        {%- endif -%}
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="catalog">
+                    <h4 class="panel-title">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            目录
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel"
+                     aria-labelledby="headingTwo">
+                    <div class="panel-body">
+                        {%- if book.catalog_html -%}
+                            {{ book.catalog_html|safe }}
+                        {%- else -%}
+                            {{ book.catalog }}
+                        {%- endif -%}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="btn-group">
+            {%- if current_user.is_authenticated -%}
+                {%- with  log=current_user.borrowing(book) -%}
+                    {%- if log -%}
+                        <a class="btn btn-primary"
+                           href="{{ url_for('log.book_return',log_id=log.id,next=request.full_path ) }}">
+                            归还
+                        </a>
+                    {%- else -%}
+                        <a class="btn btn-success"
+                           href="{{ url_for('log.book_borrow',book_id=book.id,next=request.full_path) }}"
+                           {%- if not book.can_borrow() -%}disabled="disabled"{%- endif -%}>
+                            借阅
+                        </a>
+                    {%- endif -%}
+                {%- endwith -%}
+            {%- endif -%}
+            {%- if current_user.can(Permission.UPDATE_BOOK_INFORMATION) -%}
+                <a type="button" class="btn btn-warning" href="{{ url_for('book.edit',book_id=book.id) }}">编辑书籍信息
+                </a>
+            {%- endif -%}
+
+            {%- if book.hidden -%}
+                {%- if current_user.is_administrator() -%}
+                    <a type="button" class="btn btn-info"
+                       href="{{ url_for('book.put_back',book_id=book.id) }}">还原书籍</a>
+                {%- endif -%}
+            {%- else -%}
+                {%- if current_user.can(Permission.DELETE_BOOK) -%}
+                    <a type="button" class="btn btn-danger"
+                       href="{{ url_for('book.delete',book_id=book.id) }}">删除书籍</a>
+                {%- endif -%}
+            {%- endif -%}
+        </div>
+    </div>
+    <div class="well well-lg">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist" id="log">
+            {%- with tabindex= request.args.get('show') or '0' -%}
+                <li role="presentation" {%- if tabindex=='0' -%}class="active"{%- endif -%}><a
+                        href="{%- if tabindex=='0' -%}#log{%- else -%}{{ url_for('book.detail',book_id=book.id,show=0,_anchor='log') }}{%- endif -%}"
+                        role="tab">书评</a></li>
+                <li role="presentation" {%- if tabindex=='1' -%}class="active"{%- endif -%}><a
+                        href="{%- if tabindex=='1' -%}#log{%- else -%}{{ url_for('book.detail',book_id=book.id,show=1,_anchor='log') }}{%- endif -%}"
+                        role="tab">当前借阅信息</a></li>
+                <li role="presentation" {%- if tabindex=='2' -%}class="active"{%- endif -%}><a
+                        href="{%- if tabindex=='2' -%}#log{%- else -%}{{ url_for('book.detail',book_id=book.id,show=2,_anchor='log') }}{%- endif -%}"
+                        role="tab">历史借阅信息</a></li>
+            {%- endwith -%}
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+
+            {%- if (request.args.get('show') or '0')=='0' -%}
+
+                <ul class="list-group">
+                    {%- if current_user.is_authenticated -%}
+                        <li class="list-group-item list-group-item">
+                            <div class="row">
+                                <div class="col-md-4 col-md-offset-4">
+                                    <button type="button" class="btn btn-primary btn-block" data-toggle="modal"
+                                            data-target="#myModal">
+                                        我来评价这本书
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                    {%- endif -%}
+                    {%- for comment in data -%}
+                        <li class="list-group-item clearfix">
+                            <div class="media">
+                                {%- if comment.user.avatar_url() -%}
+                                    <div class="media-left">
+                                        <a href="{{ url_for('user.detail',user_id=comment.user.id) }}">
+                                            <div class="media-object avatar avatar-small"
+                                                 style="background-image: url({{ comment.user.avatar_url() }})"></div>
+                                        </a>
+                                    </div>
+                                {%- endif -%}
+                                <div class="media-body">
+                                    <p class="media-heading"><a
+                                            href="{{ url_for('user.detail',user_id=comment.user.id) }}">
+                                        {{ comment.user.name }}</a>
+                                        <small>{{ comment.user.headline or "" }}</small>
+                                    </p>
+                                    <p class="list-group-item-text">{{ comment.comment }}</p>
+                                    {%- if comment.create_timestamp==comment.edit_timestamp -%}
+                                        <h4>
+                                            <small>
+                                                发布于: {{ comment.create_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</small>
+                                        </h4>
+                                    {%- else -%}
+                                        <h4>
+                                            <small>
+                                                编辑于: {{ comment.edit_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</small>
+                                        </h4>
+                                    {%- endif -%}
+
+                                    {%- if comment.user_id == current_user.id or current_user.can(Permission.DELETE_OTHERS_COMMENT) -%}
+                                        <a class="pull-right btn btn-danger btn-sm"
+                                           href="{{ url_for('comment.delete',comment_id=comment.id,next=request.url) }}">删除</a>
+                                    {%- endif -%}
+                                </div>
+                            </div>
+                        </li>
+                    {%- endfor -%}
+                </ul>
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">{{ current_user.name~' 对 '~book.title~' 的书评' }}</h4>
+                            </div>
+                            <form action="{{ url_for('comment.add',book_id=book.id) }}" method="post" class="form"
+                                  role="form">
+                                {{ form.hidden_tag() }}
+                                <div class="modal-body">
+                                    {{ wtf.form_field(form.comment,placeholder="长度在1024字符以内(500字中文)") }}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    {{ wtf.form_field(form.submit,button_map={'submit':'success'}) }}
+                            </form>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+
+            {%- elif request.args.get('show')=='1' -%}
+                {%- if data -%}
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th class="hidden-xs">用户邮箱</th>
+                            <th>借阅日期</th>
+                            <th>归还日期</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {%- for log in data -%}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('user.detail' ,user_id=log.user.id) }}">{{ log.user.name }}</a>
+                                </td>
+                                <td class="hidden-xs">{{ log.user.email }}</td>
+                                </td>
+                                <td>{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                                <td>{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                            </tr>
+                        {%- endfor -%}
+                        </tbody>
+                    </table>
+                {%- else -%}
+                    <div class="container-fluid">暂无信息</div>
+                {%- endif -%}
+            {%- else -%}
+                {%- if data -%}
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th class="hidden-xs">用户邮箱</th>
+                            <th>借阅日期</th>
+                            <th>归还日期</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {%- for log in data -%}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('user.detail' ,user_id=log.user.id) }}">{{ log.user.name }}</a>
+                                </td>
+                                <td class="hidden-xs">{{ log.user.email }}</td>
+                                </td>
+                                <td>{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                                <td>{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                            </tr>
+                        {%- endfor -%}
+                        </tbody>
+                    </table>
+                {%- else -%}
+                    <div class="container-fluid">暂无信息</div>
+                {%- endif -%}
+
+            {%- endif -%}
+        </div>
+
+        {%- if pagination and pagination.pages > 1 -%}
+            <div class="container-fluid text-center">
+                {{ render_pagination(pagination,args={'_anchor':'log'}) }}
+            </div>
+        {%- endif -%}
+{%- endblock -%}

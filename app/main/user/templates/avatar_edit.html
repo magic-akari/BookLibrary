@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block styles %}
+    {{ super() }}
+    <link href="{{ url_for('static',filename='css/fileinput.min.css') }}" rel="stylesheet">
+    <style>
+        main {
+            display: flex;
+        }
+
+        #input_area {
+
+        }
+    </style>
+{% endblock %}
+{% block mycontent %}
+    <div class="jumbotron">
+        <div class="row">
+            {% if user.avatar_url() %}
+                <div class="col-md-4">
+                    <div class="media-object avatar avatar-large"
+                         style="background-image: url({{ user.avatar_url() }})"></div>
+                </div>
+            {% endif %}
+            <div class="col-md-6" id="input_area">
+                <p>请确保输入正确的URL</p>
+                <p>上传的图片尺寸不能超过1Mb</p>
+                <form method="post" class="form {% if avatar_edit_form.avatar_url.errors %} has-error{% endif -%}"
+                      role="form" name="avatar_edit_form">
+                    {{ avatar_edit_form.hidden_tag() }}
+                    <div class="input-group  input-group">
+                        {{ avatar_edit_form.avatar_url(placeholder="输入外链",class_="form-control") }}
+                    <span class="input-group-btn">
+                        {{ wtf.form_field(avatar_edit_form.submit,class_="btn btn-primary",button_map={'submit':'primary'}) }}
+                    </span>
+                    </div>
+                    {% for error in avatar_edit_form.avatar_url.errors %}
+                        <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                </form>
+                <form method="post" class="form" enctype="multipart/form-data" role="form" name="avatar_edit_form">
+                    {{ avatar_upload_form.hidden_tag() }}
+                    {{ wtf.form_field(avatar_upload_form.avatar,class_="file",placehouder="上传图片") }}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{%- block scripts -%}
+    {{ super() }}
+    <script src="{{ url_for('static',filename='js/fileinput.min.js') }}"></script>
+{%- endblock -%}

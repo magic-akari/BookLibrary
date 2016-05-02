@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "bootstrap/pagination.html" import render_pagination %}
+{% block mycontent %}
+    <table class="table table-striped table-hover">
+        <h1 class="page-header">{{ title }}</h1>
+        <thead>
+        <tr>
+            <th>用户名</th>
+            <th>用户邮箱</th>
+            <th>用户借书册次</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr class="animated fadeIn delay-{{ loop.index0 }}">
+                <td><a href="{{ url_for('user.detail',user_id=user.id) }}">{{ user.name }}</a></td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.logs.count() }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if pagination and pagination.pages > 1 %}
+        <div class="container-fluid text-center">
+            {{ render_pagination(pagination) }}
+        </div>
+    {% endif %}
+{% endblock %}

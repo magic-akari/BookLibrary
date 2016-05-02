@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block styles %}
+    {{ super() }}
+    <style>
+        .Site {
+            background-color: gray;
+        }
+
+    </style>
+{% endblock %}
+{% block mycontent %}
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default animated fadeInUp">
+                <div class="panel-heading">
+                    <header class="panel-title">
+                        用户注册
+                    </header>
+                </div>
+                <div class="panel-body">
+                    <form method="post" class="form" role="form">
+                        {{ form.hidden_tag() }}
+                        {{ wtf.form_field(form.email) }}
+                        {{ wtf.form_field(form.name) }}
+                        {{ wtf.form_field(form.password) }}
+                        {{ wtf.form_field(form.password2) }}
+                        <input class="btn btn-success" id="submit" name="submit" type="submit" value="注册">
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-info pull-right">已经有账号了?点击这里登录</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
