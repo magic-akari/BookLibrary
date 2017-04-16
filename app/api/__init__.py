@@ -21,4 +21,4 @@ api = Api(api_bp)
 
 api.route = types.MethodType(api_route, api)
 
-import user, book, comment, log, tag
+from . import user, book, comment, log, tag
