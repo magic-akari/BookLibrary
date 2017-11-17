@@ -13,7 +13,7 @@ from ..decorators import permission_required
 def book_borrow():
     book_id = request.args.get('book_id')
     the_book = Book.query.get_or_404(book_id)
-    if the_book.hidden and not current_user.admin:
+    if the_book.hidden and not current_user.is_administrator():
         abort(404)
 
     result, message = current_user.borrow_book(the_book)

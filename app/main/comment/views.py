@@ -14,7 +14,7 @@ from ..decorators import permission_required
 def add(book_id):
     form = CommentForm()
     the_book = Book.query.get_or_404(book_id)
-    if the_book.hidden and not current_user.admin:
+    if the_book.hidden and not current_user.is_administrator():
         abort(404)
 
     if form.validate_on_submit():
