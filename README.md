@@ -1,3 +1,5 @@
+<p align="center"><img src="app/static/img/horizontal.png" alt="BookLibrary" height="200px"></p>
+
 # BookLibrary
 Simple Book library application written on flask with SQLite database.
 
