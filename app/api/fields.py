@@ -1,6 +1,6 @@
 from app.models import Log, Comment
 from flask import url_for
-from flask.ext.restful import fields
+from flask_restful import fields
 from . import default_per_page
 
 user_fields = {

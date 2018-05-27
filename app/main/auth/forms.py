@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from app import db
 from app.models import User
-from flask.ext.wtf import FlaskForm
+from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms import ValidationError
 from wtforms.validators import Email, Length, DataRequired, EqualTo
@@ -39,6 +39,6 @@ class ChangePasswordForm(FlaskForm):
     submit = SubmitField(u"保存密码")
 
     def validate_old_password(self, filed):
-        from flask.ext.login import current_user
+        from flask_login import current_user
         if not current_user.verify_password(filed.data):
             raise ValidationError(u'原密码错误')

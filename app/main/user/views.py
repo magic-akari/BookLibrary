@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from flask import render_template, url_for, flash, redirect, request, abort, g
-from flask.ext.login import login_required, current_user
+from flask_login import login_required, current_user
 from app.models import User, Log, Permission
 from .forms import EditProfileForm, AvatarEditForm, AvatarUploadForm
 from app import db, avatars

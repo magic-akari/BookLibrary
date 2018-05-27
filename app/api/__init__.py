@@ -1,6 +1,6 @@
 import types
 from flask import Blueprint
-from flask.ext.restful import Api, reqparse
+from flask_restful import Api, reqparse
 
 
 def api_route(self, *args, **kwargs):

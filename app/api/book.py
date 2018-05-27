@@ -1,6 +1,6 @@
 from app.models import Book as model_Book
 from flask import url_for
-from flask.ext.restful import Resource, marshal_with, abort
+from flask_restful import Resource, marshal_with, abort
 from . import api, parser, default_per_page
 from .fields import book_detail_fields, book_list
 
