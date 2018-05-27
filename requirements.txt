@@ -1,6 +1,6 @@
 aniso8601==3.0.0
 bleach==1.4.2
-dominate==2.2.0
+dominate==2.3.1
 Flask==0.10.1
 Flask-Bootstrap==3.3.5.7
 Flask-Login==0.3.2
