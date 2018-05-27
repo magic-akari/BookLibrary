@@ -8,7 +8,7 @@ Flask-PageDown==0.2.1
 Flask-RESTful==0.3.6
 Flask-SQLAlchemy==2.1
 Flask-Uploads==0.2.1
-Flask-WTF==0.12
+Flask-WTF==0.14.2
 html5lib==1.0.1
 itsdangerous==0.24
 Jinja2==2.10
