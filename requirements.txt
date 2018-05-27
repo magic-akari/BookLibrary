@@ -1,4 +1,4 @@
-aniso8601==1.2.0
+aniso8601==3.0.0
 bleach==1.4.2
 dominate==2.2.0
 Flask==0.10.1
