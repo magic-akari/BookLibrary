@@ -18,6 +18,6 @@ python-dateutil==2.6.0
 pytz==2017.2
 six==1.10.0
 SQLAlchemy==1.0.12
-visitor==0.1.2
+visitor==0.1.3
 Werkzeug==0.11.9
 WTForms==2.1
