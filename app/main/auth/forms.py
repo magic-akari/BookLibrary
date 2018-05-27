@@ -1,13 +1,13 @@
 # -*- coding:utf-8 -*-
 from app import db
 from app.models import User
-from flask.ext.wtf import Form
+from flask.ext.wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms import ValidationError
 from wtforms.validators import Email, Length, DataRequired, EqualTo
 
 
-class LoginForm(Form):
+class LoginForm(FlaskForm):
     email = StringField('Email',
                         validators=[DataRequired(message=u"该项忘了填写了!"), Length(1, 64), Email(message=u"你确定这是 Email ?")])
     password = PasswordField(u'密码', validators=[DataRequired(message=u"该项忘了填写了!"), Length(6, 32)])
@@ -15,7 +15,7 @@ class LoginForm(Form):
     submit = SubmitField(u'登入')
 
 
-class RegistrationForm(Form):
+class RegistrationForm(FlaskForm):
     email = StringField('Email',
                         validators=[DataRequired(message=u"该项忘了填写了!"), Length(1, 64), Email(message=u"你确定这是 Email ?")])
     name = StringField(u'用户名', validators=[DataRequired(message=u"该项忘了填写了!"), Length(1, 64)])
@@ -30,7 +30,7 @@ class RegistrationForm(Form):
             raise ValidationError(u'该 Email 已经被注册了')
 
 
-class ChangePasswordForm(Form):
+class ChangePasswordForm(FlaskForm):
     old_password = PasswordField(u'旧密码', validators=[DataRequired(message=u"该项忘了填写了!")])
     new_password = PasswordField(u'新密码', validators=[DataRequired(message=u"该项忘了填写了!"),
                                                      EqualTo('confirm_password', message=u'密码必须匹配'),

@@ -12,3 +12,5 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + DATABASE
 SECRET_KEY = 'you-will-never-guess'
 
 FLASKY_ADMIN = 'root@gmail.com'
+
+SQLALCHEMY_TRACK_MODIFICATIONS = False

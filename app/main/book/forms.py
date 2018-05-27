@@ -1,13 +1,13 @@
 # -*- coding:utf-8 -*-
 from app.models import Book
 from flask.ext.pagedown.fields import PageDownField
-from flask.ext.wtf import Form
+from flask.ext.wtf import FlaskForm
 from wtforms import StringField, SubmitField, IntegerField
 from wtforms import ValidationError
 from wtforms.validators import Length, DataRequired, Regexp
 
 
-class EditBookForm(Form):
+class EditBookForm(FlaskForm):
     isbn = StringField(u"ISBN",
                        validators=[DataRequired(message=u"该项忘了填写了!"),
                                    Regexp('[0-9]{13,13}', message=u"ISBN必须是13位数字")])
@@ -37,7 +37,7 @@ class AddBookForm(EditBookForm):
             raise ValidationError(u'已经存在相同的ISBN,无法录入,请仔细核对是否已库存该书籍.')
 
 
-class SearchForm(Form):
+class SearchForm(FlaskForm):
     search = StringField(validators=[DataRequired()])
     submit = SubmitField(u"搜索")
 
