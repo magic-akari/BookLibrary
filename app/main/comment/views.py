@@ -2,7 +2,7 @@
 from app import db
 from app.models import Book, Comment, Permission
 from flask import url_for, flash, redirect, request, abort
-from flask.ext.login import login_required, current_user
+from flask_login import login_required, current_user
 from . import comment
 from .forms import CommentForm
 from ..decorators import permission_required

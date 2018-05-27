@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import bleach
 from app import db, lm, avatars
 from flask import current_app, url_for
-from flask.ext.login import UserMixin, AnonymousUserMixin
+from flask_login import UserMixin, AnonymousUserMixin
 from markdown import markdown
 from werkzeug.security import generate_password_hash, check_password_hash
 

@@ -1,6 +1,6 @@
 from app.models import Comment as model_Comment
 from flask import url_for
-from flask.ext.restful import Resource, marshal_with, abort
+from flask_restful import Resource, marshal_with, abort
 from . import api, parser, default_per_page
 from .fields import comment_detail_fields, comment_list
 

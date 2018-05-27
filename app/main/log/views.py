@@ -2,7 +2,7 @@
 from app import db
 from app.models import Book, Log, Permission
 from flask import render_template, url_for, flash, redirect, request, abort
-from flask.ext.login import login_required, current_user
+from flask_login import login_required, current_user
 from . import log
 from ..decorators import permission_required
 

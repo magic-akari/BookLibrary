@@ -1,6 +1,6 @@
 from app.models import Log as model_Log
 from flask import url_for
-from flask.ext.restful import Resource, marshal_with
+from flask_restful import Resource, marshal_with
 from . import api, parser, default_per_page
 from .fields import logs_info_detail_fields, logs_info_list
 

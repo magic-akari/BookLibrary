@@ -2,7 +2,7 @@
 from app import db
 from app.models import Book, Log, Comment, Permission, Tag, book_tag
 from flask import render_template, url_for, flash, redirect, request, abort
-from flask.ext.login import current_user
+from flask_login import current_user
 from . import book
 from .forms import SearchForm, EditBookForm, AddBookForm
 from ..comment.forms import CommentForm

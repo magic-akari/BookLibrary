@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from app.models import Book
-from flask.ext.pagedown.fields import PageDownField
-from flask.ext.wtf import FlaskForm
+from flask_pagedown.fields import PageDownField
+from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, IntegerField
 from wtforms import ValidationError
 from wtforms.validators import Length, DataRequired, Regexp
