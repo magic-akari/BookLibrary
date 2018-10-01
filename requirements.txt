@@ -12,7 +12,7 @@ Flask-WTF==0.14.2
 html5lib==1.0.1
 itsdangerous==0.24
 Jinja2==2.10
-Markdown==2.6.11
+Markdown==3.0.1
 MarkupSafe==1.0
 python-dateutil==2.7.3
 pytz==2018.4
