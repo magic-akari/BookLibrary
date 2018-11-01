@@ -14,7 +14,7 @@ itsdangerous==0.24
 Jinja2==2.10
 Markdown==2.6.11
 MarkupSafe==1.0
-python-dateutil==2.7.3
+python-dateutil==2.7.5
 pytz==2018.4
 six==1.11.0
 SQLAlchemy==1.2.8
