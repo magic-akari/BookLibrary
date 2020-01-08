@@ -37,6 +37,18 @@ use `deactive` to quit the virtual environment.
 
 Python 3 is recommend, meanwhile this project is compatible with python 2.
 
+### Run with Docker
+
+You can run this project with docker by running the following commands:
+```sh
+docker build -t booklibrary:latest .
+
+docker run -ti -v `pwd`:/app -p 4000:4000 booklibrary:latest
+```
+
+By adding the `-v` above, you can make changes in the local files and they will
+be reflected inside the docker container. If you want to run it in
+"production" mode, skip the above `-v` option.
 
 ## Dependencies
 
